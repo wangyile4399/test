@@ -13,7 +13,7 @@
 
 
 		<script type="text/javascript">
-        
+        var myChart5 = echarts.init(document.getElementById('mid1'));
 		$.getJSON("js/ningbo.json", function (geoJson) {
 			echarts.registerMap('nb', geoJson);
 			myChart5.hideLoading();
@@ -240,7 +240,7 @@
 			myChart5.setOption(mid1);
 		});
 
-	var myChart5 = echarts.init(document.getElementById('mid1'));
+	
 
 
                 	
