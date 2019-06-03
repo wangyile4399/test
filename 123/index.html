@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+	</head>
+	<body class="body">
+		<div class="main-cont">
+			<div id="mid1" class="chart" style="height: 400px;width: 500px;border:1px solid #000;"></div>
+		</div>
+		<script type="text/javascript" src="js/jquery.min.js"></script>
+		<script type="text/javascript" src="js/echarts.min.js"></script>
+
+
+		<script type="text/javascript">
+        
+		$.getJSON("js/ningbo.json", function (geoJson) {
+			echarts.registerMap('nb', geoJson);
+			myChart5.hideLoading();
+			var geoCoordMap = {
+				'海曙区': [121.4500922850001, 29.935982633000037],
+				'江北区': [121.51792536000009, 29.93823222200000],
+				'镇海区': [121.6074758060001, 29.999701746000053],
+				'鄞州区': [121.5823253420001, 29.62878808800008],
+				'北仑区': [121.97502427400002, 29.89824886000008],
+				'象山县': [121.84231279800002, 29.358775376000067],
+				'宁海县': [121.79426627500004, 29.269921921000048],
+				'慈溪市': [121.12529851200009, 30.29898573400004],
+				'余姚市': [120.97085831100003, 30.06724207600007],
+				'奉化区': [121.39178511, 29.74275312800006],
+			}
+			var data = [
+				{ name: '海曙区', value: 0 },
+				{ name: '江北区', value: 0 },
+				{ name: '镇海区', value: 0 },
+				{ name: '鄞州区', value: 0 },
+				{ name: '北仑区', value: 0 },
+				{ name: '象山县', value: 0 },
+				{ name: '宁海县', value: 0 },
+				{ name: '慈溪市', value: 0 },
+				{ name: '余姚市', value: 0 },
+				{ name: '奉化区', value: 0 }
+			];
+			var max = 480, min = 9; // todo
+			var maxSize4Pin = 100, minSize4Pin = 20;
+
+			var convertData = function (data) {
+				var res = [];
+				for (var i = 0; i < data.length; i++) {
+					var geoCoord = geoCoordMap[data[i].name];
+					if (geoCoord) {
+						res.push({
+							name: data[i].name,
+							value: geoCoord.concat(data[i].value)
+						});
+					}
+				}
+				return res;
+			};
+
+
+			mid1 = {
+				backgroundColor: '#020933',
+				title: {
+					top: 20,
+					text: '“会员活跃度” - 山东省',
+					subtext: '',
+					x: 'center',
+					textStyle: {
+						color: '#ccc'
+					}
+				},
+
+				tooltip: {
+					trigger: 'item',
+					formatter: function (params) {
+						if (typeof (params.value)[2] == "undefined") {
+							return params.name + ' : ' + params.value;
+						} else {
+							return params.name + ' : ' + params.value[2];
+						}
+					}
+				},
+				/*   legend: {
+					   orient: 'vertical',
+					   y: 'bottom',
+					   x: 'right',
+						data:['pm2.5'],
+					   textStyle: {
+						   color: '#fff'
+					   }
+				   },*/
+				legend: {
+					orient: 'vertical',
+					y: 'bottom',
+					x: 'right',
+					data: ['pm2.5'],
+					textStyle: {
+						color: '#fff'
+					}
+				},
+				visualMap: {
+					show: false,
+					min: 0,
+					max: 500,
+					left: 'left',
+					top: 'bottom',
+					text: ['高', '低'], // 文本，默认为数值文本
+					calculable: true,
+					seriesIndex: [1],
+					inRange: {
+						// color: ['#3B5077', '#031525'] // 蓝黑
+						// color: ['#ffc0cb', '#800080'] // 红紫
+						// color: ['#3C3B3F', '#605C3C'] // 黑绿
+						//color: ['#0f0c29', '#302b63', '#24243e'] // 黑紫黑
+						//color: ['#23074d', '#cc5333'] // 紫红
+						// color: ['#00467F', '#A5CC82'] // 蓝绿
+						// color: ['#1488CC', '#2B32B2'] // 浅蓝
+						// color: ['#00467F', '#A5CC82'] // 蓝绿
+						// color: ['#00467F', '#A5CC82'] // 蓝绿
+						// color: ['#00467F', '#A5CC82'] // 蓝绿
+						// color: ['#00467F', '#A5CC82'] // 蓝绿
+
+					}
+				},
+				geo: {
+					show: true,
+					map: 'jiangxi',
+					label: {
+						normal: {
+							show: false
+						},
+						emphasis: {
+							show: false,
+						}
+					},
+					roam: true,
+					itemStyle: {
+						normal: {
+							areaColor: 'transparent',
+							borderColor: '#3fdaff',
+							borderWidth: 2,
+							shadowColor: 'rgba(63, 218, 255, 0.5)',
+							shadowBlur: 30
+						},
+						emphasis: {
+							areaColor: '#2B91B7',
+						}
+					}
+				},
+				series: [
+					{
+						name: 'light',
+						type: 'scatter',
+						coordinateSystem: 'geo',
+						data: convertData(data),
+						symbolSize: function (val) {
+							return val[2] / 10;
+						},
+						label: {
+							normal: {
+								formatter: '{b}',
+								position: 'right',
+								show: true
+							},
+							emphasis: {
+								show: true
+							}
+						},
+						itemStyle: {
+							normal: {
+								color: '#F4E925'
+							}
+						}
+					},
+					{
+						type: 'map',
+						map: 'jiangxi',
+						geoIndex: 0,
+						aspectScale: 0.75, //长宽比
+						showLegendSymbol: false, // 存在legend时显示
+						label: {
+							normal: {
+								show: false
+							},
+							emphasis: {
+								show: false,
+								textStyle: {
+									color: '#fff'
+								}
+							}
+						},
+						roam: true,
+						itemStyle: {
+							normal: {
+								areaColor: '#031525',
+								borderColor: '#FFFFFF',
+							},
+							emphasis: {
+								areaColor: '#2B91B7'
+							}
+						},
+						animation: false,
+						data: data
+					},
+					{
+						name: 'Top 5',
+						type: 'effectScatter',
+						coordinateSystem: 'geo',
+						data: convertData(data.sort(function (a, b) {
+							return b.value - a.value;
+						}).slice(0, 5)),
+						symbolSize: function (val) {
+							return val[2] / 10;
+						},
+						showEffectOn: 'render',
+						rippleEffect: {
+							brushType: 'stroke'
+						},
+						hoverAnimation: true,
+						label: {
+							normal: {
+								formatter: '{b}',
+								position: 'right',
+								show: true
+							}
+						},
+						itemStyle: {
+							normal: {
+								color: '#F4E925',
+								shadowBlur: 10,
+								shadowColor: '#05C3F9'
+							}
+						},
+						zlevel: 1
+					},
+
+				]
+			};
+			myChart5.setOption(mid1);
+		});
+
+	var myChart5 = echarts.init(document.getElementById('mid1'));
+
+
+                	
+
+
+
+			
+		</script>
+	</body>
+</html>
